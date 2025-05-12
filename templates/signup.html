@@ -5,46 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
     <link rel="stylesheet" href="/static/sign-up.css" />
-
   </head>
   <body>
     <div class="signup-container">
-
       <h2>Sign Up</h2>
       <form id="signupForm" method="POST" action="/signup">
         <div class="form-group">
-          <label for="firstName">First Name:</label>
-          <input type="text" id="firstName" name="firstName" required />
-          <div id="firstNameError" class="error-message"></div>
+          <label for="first_name">First Name:</label>
+          <input type="text" id="first_name" name="first_name" required />
+          <div id="first_name_error" class="error-message"></div>
         </div>
         <div class="form-group">
-          <label for="lastName">Last Name:</label>
-          <input type="text" id="lastName" name="lastName" required />
-          <div id="lastNameError" class="error-message"></div>
+          <label for="last_name">Last Name:</label>
+          <input type="text" id="last_name" name="last_name" required />
+          <div id="last_name_error" class="error-message"></div>
         </div>
         <div class="form-group">
           <label for="email">Email:</label>
           <input type="email" id="email" name="email" required />
-          <div id="emailError" class="error-message"></div>
+          <div id="email_error" class="error-message"></div>
         </div>
         <div class="form-group">
           <label for="password">Password:</label>
           <input type="password" id="password" name="password" required />
-          <div id="passwordError" class="error-message"></div>
+          <div id="password_error" class="error-message"></div>
         </div>
         <div class="form-group">
-          <label for="confirmPassword">Confirm Password:</label>
+          <label for="confirm_password">Confirm Password:</label>
           <input
             type="password"
-            id="confirmPassword"
-            name="confirmPassword"
+            id="confirm_password"
+            name="confirm_password"
             required
           />
-          <div id="confirmPasswordError" class="error-message"></div>
+          <div id="confirm_password_error" class="error-message"></div>
         </div>
         <button type="submit">Register</button>
       </form>
-      <p class="login-link">Already have an account? <a href="signin.html">Sign in</a></p>
+      <p class="login-link">
+        Already have an account? <a href="signin">Sign in</a>
+      </p>
     </div>
     <!-- <script src="/js/sign-up.js"></script> -->
   </body>

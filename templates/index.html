@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+</head>
+<body>
+  <h1>Welcome, <span id="usernameDisplay"></span>!</h1> <!-- The username will be dynamically inserted here -->
+
+  <script>
+    // Fetch username from localStorage
+    window.onload = function() {
+      let username = localStorage.getItem('username') || 'Guest'; // Default to 'Guest' if no username found
+      document.getElementById('usernameDisplay').textContent = username;
+    };
+  </script>
+</body>
+</html>

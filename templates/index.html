@@ -12,7 +12,10 @@
     <script>
       // Fetch username from localStorage
       window.onload = function () {
-        let username = localStorage.getItem("username") || "Guest"; // Default to 'Guest' if no username found
+        let username = JSON.parse(localStorage.getItem("user") ?? "{}").first_name;
+        if (!username) {
+          window.location.href = "/signin";
+        }
         document.getElementById("username_display").textContent = username;
       };
     </script>

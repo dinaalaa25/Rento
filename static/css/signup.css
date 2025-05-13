@@ -1,0 +1,111 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #beb9d4; /* Dark background */
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Container */
+.signup-container {
+    background-color: #2a2640; /* Dark purple/gray card */
+    padding: 50px 40px;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 500px; /* Wider form */
+}
+
+/* Heading */
+.signup-container h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 26px;
+    color: #e0d7ff;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 18px;
+}
+
+/* Labels */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #cfcfcf;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    color: #111;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus {
+    border-color: #9b59b6;
+    box-shadow: 0 0 5px rgba(155, 89, 182, 0.5);
+    outline: none;
+}
+
+/* Error Message */
+.error-message {
+    color: #ff7675;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Register Button */
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #8e44ad, #6c2eb9);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(90deg, #a15cc9, #8149cf);
+}
+
+/* Login Link */
+.login-link {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 16px;
+    color: #faf9fd;
+}
+
+.login-link a {
+    color: #eae6ec;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+    color: #d3aaff;
+}

@@ -1,9 +1,8 @@
 # Imports needed.
-from flask import Flask, request, redirect, url_for, flash, jsonify, render_template, session
+from flask import Flask, request, redirect, url_for, flash, jsonify, render_template
 import re, os, json
 
 app = Flask("app")
-app.secret_key = os.urandom(24)  # Secret key for session management
 
 #-------------------- Utility Functions--------------
 # Function that reads and returns the contents of an HTML file from the "templates" folder.
@@ -55,11 +54,7 @@ def signin_page():
 
 @app.route('/signin', methods=['POST'])
 def signin():
-    body = {}
-    if request.is_json:
-        body = request.get_json()
-    else:
-        body = request.form
+    body = request.get_json()
 
     email = body.get("email")
     password = body.get("password")
@@ -93,12 +88,7 @@ def signin():
             users = json.load(file)
             for user in users:
                 if user["email"] == email and user["password"] == password:
-                    session["user"] = {
-                        "first_name": user["first_name"],
-                        "last_name": user["last_name"],
-                        "email": user["email"]
-                    }
-                    return redirect(url_for('home'))
+                    return jsonify(user), 200
             return jsonify({"message": "Invalid email or password."}), 401
     except FileNotFoundError:
         return jsonify({"message": "User database not found."}), 500
@@ -111,11 +101,7 @@ def signup_page():
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    body = {}
-    if request.is_json:
-        body = request.get_json()
-    else:
-        body = request.form
+    body = request.get_json()
 
     new_user = {
         "first_name": body.get("first_name"),
@@ -158,22 +144,15 @@ def signup():
         "last_name": new_user["last_name"],
         "email": new_user["email"]
     }
-    session["user"] = response_user
 
-    return redirect(url_for('home'))
+    return jsonify(response_user), 201
 
 #-------
 
 # Home route - loads the index page and replaces username placeholder
 @app.route('/')
 def home():
-    user = session.get('user')
     content = get_html('index')
-    if user and 'first_name' in user:
-        content = content.replace('<span id="username_display"></span>',
-        f'<span id="usernameDisplay">{user["first_name"]}</span>')
-    else:
-        return redirect(url_for('signin_page'))
     return content
 
 

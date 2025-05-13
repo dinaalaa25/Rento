@@ -142,5 +142,23 @@
         "last_name": "Khalel",
         "email": "hazemadelkhalel@gmail.com",
         "password": "123FlaskApp$&?"
+    },
+    {
+        "first_name": "Dina",
+        "last_name": "Alaa",
+        "email": "alaad3877@gmail.com",
+        "password": "1234@Flask"
+    },
+    {
+        "first_name": "Dina",
+        "last_name": "Alaa",
+        "email": "alaad3877@gmail.com",
+        "password": "1234#Dina"
+    },
+    {
+        "first_name": "ali",
+        "last_name": "khaled",
+        "email": "aliKh2@gmail.com",
+        "password": "alikh@22"
     }
 ]

@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "model": "Corolla",
+    "brand": "Toyota",
+    "price_per_day": 50,
+    "image_url": "/static/images/1.jpg"
+  },
+  {
+    "id": 2,
+    "model": "Civic",
+    "brand": "Honda",
+    "price_per_day": 48,
+    "image_url": "/static/images/1.jpg"
+  },
+  {
+    "id": 3,
+    "model": "Model 3",
+    "brand": "Tesla",
+    "price_per_day": 90,
+    "image_url": "/static/images/1.jpg"
+  },
+  {
+    "id": 4,
+    "model": "Elantraaaaaaaa",
+    "brand": "Hyundaiiiii",
+    "price_per_day": 45,
+    "image_url": "/static/images/1.jpg"
+  },
+  {
+    "id": 5,
+    "model": "Mustang",
+    "brand": "Ford",
+    "price_per_day": 75,
+    "image_url": "/static/images/1.jpg"
+  },
+  {
+    "id": 6,
+    "model": "Camry",
+    "brand": "Toyota",
+    "price_per_day": 55,
+    "image_url": "/static/images/1.jpg"
+  },
+  {
+    "id": 7,
+    "model": "Altima",
+    "brand": "Nissan",
+    "price_per_day": 52,
+    "image_url": "/static/images/1.jpg"
+  },
+  {
+    "id": 8,
+    "model": "HAZEM",
+    "brand": "DODY",
+    "price_per_day": 214,
+    "image_url": "/static/images/1.jpg"
+  },
+  {
+    "id": 9,
+    "model": "boyfriend",
+    "brand": "hazem",
+    "price_per_day": 10000,
+    "image_url": "none"
+  }
+]

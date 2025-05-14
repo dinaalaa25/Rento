@@ -1,23 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
-  </head>
-  <body>
-    <h1>Welcome, <span id="username_display"></span>!</h1>
-    <!-- The username will be dynamically inserted here -->
+{% extends "base.html" %}
 
-    <script>
-      // Fetch username from localStorage
-      window.onload = function () {
-        let username = JSON.parse(localStorage.getItem("user") ?? "{}").first_name;
-        if (!username) {
-          window.location.href = "/signin";
-        }
-        document.getElementById("username_display").textContent = username;
-      };
-    </script>
-  </body>
-</html>
+{% block title %}Home | Rento{% endblock %}
+
+{% block content %}
+<div class="home-header">
+  <h1>Explore Our Cars</h1>
+  <a href="/cars" class="add-car-btn">+ Add New Car</a>
+</div>
+<section id="cars" class="car-cards-section">
+  <div class="car-cards-container">
+    {% for car in cars %}
+    <div class="car-card">
+      <img src="{{ car.image_url }}" alt="{{ car.brand }} {{ car.model }}">
+      <h2>{{ car.brand }} {{ car.model }}</h2>
+      <p class="car-price"><span>Price:</span> ${{ car.price_per_day }}/Day</p>
+      <div class="card-actions">
+        <a href="/cars/{{ car.id }}" class="edit-btn">Edit</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+

@@ -5,11 +5,6 @@ import json
 # Path to the JSON file used for storing users
 users_db = 'users.json'
 
-# Load and return the HTML content of a page from the templates folder
-def get_html(page_name):
-    with open(f"templates/{page_name}.html", encoding="utf-8") as html_file:
-        return html_file.read()
-
 # Write user data to a JSON file (create or append)
 def write_to_json(first_name, last_name, email, password, filename=users_db):
     try:

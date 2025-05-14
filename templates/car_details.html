@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit Car' if mode == 'edit' else 'Add Car' }} | Rento{% endblock %}
+
+{% block content %}
+<div class="car-details-container">
+  <h2>{{ 'Edit Car' if mode == 'edit' else 'Add a New Car' }}</h2>
+  <form id="car_form">
+
+    <div class="form-group">
+      <label for="car_brand">Car Brand:</label>
+      <input type="text" id="car_brand" name="car_brand" required value="{{ car.brand if car else '' }}" />
+      <div class="error-message" id="car_brand_error"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="car_model">Car Model:</label>
+      <input type="text" id="car_model" name="car_model" required value="{{ car.model if car else '' }}" />
+      <div class="error-message" id="car_model_error"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="car_price">Rental Price (per day):</label>
+      <input type="number" id="car_price" name="car_price" required value="{{ car.price_per_day if car else '' }}" />
+      <div class="error-message" id="car_price_error"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="car_image">Car Image:</label>
+      <input type="text" id="car_image" name="car_image" value="{{ car.image_url if car else '' }}" />
+      <div class="error-message" id="car_image_error"></div>
+    </div>
+
+    <button type="submit">{{ 'Update Car' if mode == 'edit' else 'Add Car' }}</button>
+  </form>
+</div>
+
+{% block scripts %}
+<script>
+const mode = "{{ mode }}";
+const carId = "{{ car.id if car else '' }}";
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('car_form');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (mode === 'edit') {
+            editCar(e, carId);
+        } else {
+            addCar(e);
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% endblock %}

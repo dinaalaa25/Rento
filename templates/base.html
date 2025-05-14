@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Rento | Car Rental{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/static/styles/base.css" />
+    <link rel="stylesheet" href="/static/styles/car_details.css" />
+    <script src="/static/js/base.js"></script>
+    <script src="/static/js/car.js"></script>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">
+          <a href="/">
+            <img src="/static/images/logo.png" alt="Rento Logo" class="logo"  />
+          </a>
+        </div>
+        <ul class="navbar-menu">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#cars">My Cars</a></li>
+          <li>
+            <a href="#" class="logout-link"><i class="fas fa-sign-out-alt"></i></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="content">{% block content %}{% endblock %}</div>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <span>&copy; 2024 Rento. All rights reserved.</span>
+        <span>Contact: info@rento.com</span>
+      </div>
+    </footer>
+
+    <script>
+      // Placeholder for your nav.js -  You can add more interactivity here if needed.
+      //  For example, you could add a script to handle the logout button click,
+      //  or to highlight the active link in the navbar.
+
+      //  Example (basic) -  prevent default action on logout:
+      document.addEventListener("DOMContentLoaded", () => {
+        const logoutLink = document.querySelector(".logout-link");
+        if (logoutLink) {
+          logoutLink.addEventListener("click", (event) => {
+            event.preventDefault();
+            // Add your logout logic here
+            console.log("Logout clicked");
+            alert("Logging out...");
+          });
+        }
+      });
+    </script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

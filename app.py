@@ -3,6 +3,7 @@
 from flask import Flask
 from routes import main as main_blueprint  # Import the blueprint from routes.py
 
+# Drive the car of your dreams
 app = Flask("app")  # Initialize the Flask app
 
 # Register the routes (blueprint)

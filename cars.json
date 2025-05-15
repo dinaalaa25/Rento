@@ -1,23 +1,9 @@
-[ 
+[
   {
     "id": 1,
     "model": "Corolla",
     "brand": "Toyota",
     "price_per_day": 50,
-    "image_url": "/static/images/1.jpg"
-  },
-  {
-    "id": 2,
-    "model": "Civic",
-    "brand": "Honda",
-    "price_per_day": 48,
-    "image_url": "/static/images/1.jpg"
-  },
-  {
-    "id": 3,
-    "model": "Model 3",
-    "brand": "Tesla",
-    "price_per_day": 90,
     "image_url": "/static/images/1.jpg"
   },
   {

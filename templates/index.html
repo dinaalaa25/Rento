@@ -16,6 +16,7 @@
       <p class="car-price"><span>Price:</span> ${{ car.price_per_day }}/Day</p>
       <div class="card-actions">
         <a href="/cars/{{ car.id }}" class="edit-btn">Edit</a>
+        <a href="/delete/{{ car.id }}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this car?')">Delete</a>
       </div>
     </div>
     {% endfor %}

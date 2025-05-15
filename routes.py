@@ -1,6 +1,6 @@
 # This file handles all route definitions for the application.
 
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, redirect
 import re, json, os
 from utils import write_to_json, write_to_text, users_db  # Import helpers from utils
 from car import Car  # Import our Car class
@@ -181,3 +181,22 @@ def car_detail_page(car_id):
         return jsonify({"message": "Car updated successfully!"}), 200
     
     return render_template('car_details.html', mode='edit', car=car_data)
+
+# DELETE: Delete a car
+@main.route('/delete/<int:car_id>')
+def delete_car(car_id):
+    cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
+    try:
+        with open(cars_file, 'r') as f:
+            cars_data = json.load(f)
+        
+        # Remove the car
+        cars_data = [car for car in cars_data if car.get('id') != car_id]
+        
+        # Save back to file
+        with open(cars_file, 'w') as f:
+            json.dump(cars_data, f, indent=2)
+        
+        return redirect('/')
+    except Exception as e:
+        return redirect('/')

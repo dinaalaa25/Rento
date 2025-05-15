@@ -45,4 +45,33 @@ function validateForm(form) {
   return true;
 }
 
-// TODO: add a function to logout and redirect to the login page
+// Check if user is logged in
+function checkUserLoggedIn() {
+  // Get current path
+  const currentPath = window.location.pathname;
+  
+  // Skip auth check for signin and signup pages
+  if (currentPath === '/signin' || currentPath === '/signup') {
+    return;
+  }
+  
+  // Check if user exists in local storage
+  const user = localStorage.getItem('user');
+  
+  if (!user) {
+    // If not logged in, redirect to signin page
+    window.location.href = '/signin';
+  }
+}
+
+// Logout function to remove user from local storage and redirect to signin page
+function logout() {
+  // Remove user data from local storage
+  localStorage.removeItem("user");
+  
+  // Redirect to signin page
+  window.location.href = "/signin";
+}
+
+// Run auth check when page loads
+document.addEventListener('DOMContentLoaded', checkUserLoggedIn);

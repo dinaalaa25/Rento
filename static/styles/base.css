@@ -1,3 +1,31 @@
+/* Complete CSS Reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
 /* Reset and General Styles */
 * {
   margin: 0;
@@ -7,11 +35,16 @@
 
 html, body {
   height: 100%;
+  min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
 }
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f0f0; /* Light gray background */
+  background-color: #beb9d4; /* Updated to match signin/signup background */
   color: #333;
   line-height: 1.6;
   display: flex;
@@ -19,9 +52,18 @@ body {
   min-height: 100vh;
 }
 
+.page-wrap {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  position: relative;
+}
+
 /* Navbar Styles */
 .navbar {
-  background: #1a237e;
+  background: #2a2640; /* Updated to match signin/signup container color */
   color: #fff;
   padding: 1rem 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -44,6 +86,13 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+#welcome-text {
+  color: #d3aaff;
+  font-size: 16px;
+  margin-left: 15px;
+  font-weight: 600;
 }
 
 .navbar-brand a {
@@ -76,7 +125,7 @@ body {
 }
 
 .navbar-menu a {
-  color: #fff;
+  color: #e0d7ff; /* Updated to match signin/signup text color */
   text-decoration: none;
   font-weight: 600;
   padding: 0.5rem 1rem;
@@ -85,7 +134,7 @@ body {
 }
 
 .navbar-menu a:hover {
-  color: #a15cc9; /* Lighter purple on hover */
+  color: #d3aaff; /* Updated to match signin/signup hover color */
 }
 
 .navbar-menu i {
@@ -95,20 +144,26 @@ body {
 /* Content Styles */
 .content {
   flex: 1 0 auto;
+  width: 100%;
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  margin: 1rem auto 0;
+  padding: 0 1rem 1rem;
+  position: relative;
+  overflow: visible;
 }
 
 /* Example Styles for the Add Car Form (You can adjust these) */
 form {
-  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+  background-color: #2a2640; /* Updated to match signin/signup container color */
   margin-bottom: 2rem;
+  padding: 28px 36px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(80, 0, 100, 0.08);
 }
 
 form h2 {
   margin-bottom: 1.5rem;
-  color: #2a2640;
+  color: #e0d7ff; /* Updated to match signin/signup heading color */
   text-align: center;
 }
 
@@ -120,16 +175,18 @@ form label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #555;
+  color: #cfcfcf; /* Updated to match signin/signup label color */
 }
 
 form input[type="text"],
 form input[type="number"],
 form input[type="file"] {
-  width: 450px;
+  width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid #555;
   border-radius: 5px;
+  background-color: #f8f8f8;
+  color: #111;
   transition: border-color 0.3s ease;
 }
 
@@ -137,16 +194,16 @@ form input[type="text"]:focus,
 form input[type="number"]:focus,
 form input[type="file"]:focus {
   outline: none;
-  border-color: #a15cc9;
-  box-shadow: 0 0 5px rgba(161, 92, 201, 0.3);
+  border-color: #9b59b6; /* Updated to match signin/signup focus color */
+  box-shadow: 0 0 5px rgba(155, 89, 182, 0.5);
 }
 
 form button[type="submit"] {
-  background: linear-gradient(to right, #8e44ad, #6c2eb9); /* Gradient button */
+  background: linear-gradient(90deg, #8e44ad, #6c2eb9); /* Updated to match signin/signup button gradient */
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 9px; /* Updated to match signin/signup button radius */
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-weight: 600;
@@ -154,27 +211,26 @@ form button[type="submit"] {
 }
 
 form button[type="submit"]:hover {
-  background: linear-gradient(to right, #a15cc9, #8149cf);
+  background: linear-gradient(90deg, #a15cc9, #8149cf); /* Updated to match signin/signup button hover */
 }
 
 .error-message {
-  color: #e74c3c;
+  color: #ff7675; /* Updated to match signup error color */
   font-size: 0.9rem;
   margin-top: 0.5rem;
 }
 
 input.error {
-  border-color: #e74c3c !important;
+  border-color: #ff7675 !important; /* Updated to match signup error color */
 }
 
 .footer {
-  flex-shrink: 0;
-  background: #222;
+  background: #2a2640; /* Updated to match signin/signup container color */
   color: #fff;
   text-align: center;
   padding: 1rem 0;
-  margin-top: 2rem;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .car-cards-container {
@@ -182,16 +238,24 @@ input.error {
   flex-wrap: wrap;
   gap: 2rem;
   justify-content: center;
-  margin: 2rem 0;
+  margin: 2rem 0 0 0;
+  padding-bottom: 1rem;
+  overflow: visible;
+  width: 100%;
 }
 
 .car-card {
-  background: #fff;
+  background: #2a2640; /* Updated to match signin/signup container color */
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   width: 260px;
+  height: auto;
+  min-height: 240px;
   padding: 1rem;
   text-align: center;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .car-card img {
@@ -199,26 +263,93 @@ input.error {
   height: 140px;
   object-fit: cover;
   border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.car-card h2 {
+  margin: 0.5rem 0;
+  font-size: 1.2rem;
+  color: #e0d7ff; /* Updated to match signin/signup heading color */
+}
+
+.car-card .car-price {
+  margin: 0.5rem 0;
+  color: #cfcfcf; /* Updated to match signin/signup text color */
+}
+
+.car-card .car-price span {
+  color: #d3aaff; /* Lighter purple for the "Price:" label */
+  font-weight: bold;
+}
+
+.car-card .card-actions {
+  margin-top: auto;
+  padding-top: 0.5rem;
 }
 
 .add-car-btn, .edit-btn {
   display: inline-block;
   margin: 0.5rem 0;
   padding: 0.5rem 1rem;
-  background: #1a237e;
+  background: linear-gradient(90deg, #8e44ad, #6c2eb9); /* Updated to match signin/signup button gradient */
   color: #fff;
-  border-radius: 6px;
+  border-radius: 9px; /* Updated to match signin/signup button radius */
   text-decoration: none;
   transition: background 0.2s;
 }
 
 .add-car-btn:hover, .edit-btn:hover {
-  background: #3949ab;
+  background: linear-gradient(90deg, #a15cc9, #8149cf); /* Updated to match signin/signup button hover */
 }
 
 .home-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 2rem 5% 1rem 5%;
+  margin: 1rem 5% 0 5%;
+  color: #e0d7ff; /* Updated to match signin/signup heading color */
+}
+
+.home-header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2a2640; /* Dark purple for contrast against light background */
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8e44ad; /* Updated to match signin/signup purple */
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a15cc9; /* Updated to match signin/signup hover color */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8e44ad #f1f1f1; /* Updated to match signin/signup purple */
+}
+
+/* Force scrollbar settings - remove !important to prevent duplicate scrollbars */
+html {
+  overflow-y: auto;
+}
+
+@-moz-document url-prefix() {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #8e44ad #f1f1f1; /* Updated to match signin/signup purple */
+  }
 }

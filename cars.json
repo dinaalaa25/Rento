@@ -1,4 +1,4 @@
-[
+[ 
   {
     "id": 1,
     "model": "Corolla",
@@ -23,7 +23,7 @@
   {
     "id": 4,
     "model": "Elantraaaaaaaa",
-    "brand": "Hyundaiiiii",
+    "brand": "Hyundaiiiiiyyyyyy",
     "price_per_day": 45,
     "image_url": "/static/images/1.jpg"
   },
@@ -47,19 +47,5 @@
     "brand": "Nissan",
     "price_per_day": 52,
     "image_url": "/static/images/1.jpg"
-  },
-  {
-    "id": 8,
-    "model": "HAZEM",
-    "brand": "DODY",
-    "price_per_day": 214,
-    "image_url": "/static/images/1.jpg"
-  },
-  {
-    "id": 9,
-    "model": "boyfriend",
-    "brand": "hazem",
-    "price_per_day": 10000,
-    "image_url": "none"
   }
 ]

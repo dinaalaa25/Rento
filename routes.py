@@ -3,6 +3,7 @@
 from flask import Blueprint, request, jsonify, render_template
 import re, json, os
 from utils import write_to_json, write_to_text, users_db  # Import helpers from utils
+from car import Car  # Import our Car class
 
 # Create a blueprint for grouping the routes
 main = Blueprint('main','app')
@@ -13,7 +14,8 @@ def home():
     cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
     try:
         with open(cars_file, 'r') as f:
-            cars = json.load(f)
+            cars_data = json.load(f)
+            cars = [Car(**car) for car in cars_data]  # Convert JSON data to Car objects
     except Exception as e:
         cars = []
     return render_template('index.html', cars=cars)
@@ -113,29 +115,34 @@ def add_car_page():
 def add_car_submit():
     # Extract form data
     body = request.get_json()
-    car_model = body.get('model')
-    car_brand = body.get('brand')
-    car_price = body.get('price_per_day')
-    car_image = body.get('image_url')
+    
     # Load cars
     cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
     try:
         with open(cars_file, 'r') as f:
-            cars = json.load(f)
+            cars_data = json.load(f)
     except Exception as e:
-        cars = []
+        cars_data = []
+    
     # Generate new id
-    new_id = max([car.get('id', 0) for car in cars], default=0) + 1
-    new_car = {
-        'id': new_id,
-        'model': car_model,
-        'brand': car_brand,
-        'price_per_day': int(car_price),
-        'image_url': car_image
-    }
-    cars.append(new_car)
+    new_id = max([car.get('id', 0) for car in cars_data], default=0) + 1
+    
+    # Create new car using Car class
+    new_car = Car(
+        id=new_id,
+        model=body.get('model'),
+        brand=body.get('brand'),
+        price_per_day=int(body.get('price_per_day')),
+        image_url=body.get('image_url')
+    )
+    
+    # Convert car object to dict and append to cars list
+    cars_data.append(new_car.__dict__)
+    
+    # Save to file
     with open(cars_file, 'w') as f:
-        json.dump(cars, f, indent=2)
+        json.dump(cars_data, f, indent=2)
+    
     return jsonify({"message": "Car added successfully!"}), 200
 
 # GET and POST: Edit car
@@ -144,18 +151,33 @@ def car_detail_page(car_id):
     cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
     try:
         with open(cars_file, 'r') as f:
-            cars = json.load(f)
+            cars_data = json.load(f)
     except Exception as e:
-        cars = []
-    car = next((car for car in cars if car.get('id') == car_id), None)
+        cars_data = []
+    
+    car_data = next((car for car in cars_data if car.get('id') == car_id), None)
+    
     if request.method == 'POST':
         body = request.get_json()
-        # Update car details
-        car['model'] = body.get('model')
-        car['brand'] = body.get('brand')
-        car['price_per_day'] = int(body.get('price_per_day'))
-        car['image_url'] = body.get('image_url')
+        # Create updated car using Car class
+        updated_car = Car(
+            id=car_id,
+            model=body.get('model'),
+            brand=body.get('brand'),
+            price_per_day=int(body.get('price_per_day')),
+            image_url=body.get('image_url')
+        )
+        
+        # Update car in the list
+        for i, car in enumerate(cars_data):
+            if car.get('id') == car_id:
+                cars_data[i] = updated_car.__dict__
+                break
+        
+        # Save to file
         with open(cars_file, 'w') as f:
-            json.dump(cars, f, indent=2)
+            json.dump(cars_data, f, indent=2)
+        
         return jsonify({"message": "Car updated successfully!"}), 200
-    return render_template('car_details.html', mode='edit', car=car)
+    
+    return render_template('car_details.html', mode='edit', car=car_data)

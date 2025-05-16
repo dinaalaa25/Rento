@@ -1,57 +1,157 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="pageTitle">Car Details | Rento</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/static/styles/base.css" />
+    <link rel="stylesheet" href="/static/styles/car_details.css" />
+    <script src="/static/js/validation.js"></script>
+    <script src="/static/js/car.js"></script>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <nav class="navbar">
+        <div class="navbar-container">
+          <div class="navbar-brand">
+            <a href="/">
+              <img src="/static/images/logo.png" alt="Rento Logo" class="logo"  />
+            </a>
+            <span id="welcome-text">Welcome!</span>
+          </div>
+          <ul class="navbar-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/#cars">My Cars</a></li>
+            <li>
+              <a href="javascript:void(0)" onclick="logout()" class="logout-link"><i class="fas fa-sign-out-alt"></i></a>
+            </li>
+          </ul>
+        </div>
+      </nav>
 
-{% block title %}{{ 'Edit Car' if mode == 'edit' else 'Add Car' }} | Rento{% endblock %}
+      <div class="content">
+        <div class="car-details-container">
+          <h2 id="formTitle">Add a New Car</h2>
+          <form id="car_form">
+            <div class="form-group">
+              <label for="car_brand">Car Brand:</label>
+              <input type="text" id="car_brand" name="car_brand" required />
+              <div class="error-message" id="car_brand_error"></div>
+            </div>
 
-{% block content %}
-<div class="car-details-container">
-  <h2>{{ 'Edit Car' if mode == 'edit' else 'Add a New Car' }}</h2>
-  <form id="car_form">
+            <div class="form-group">
+              <label for="car_model">Car Model:</label>
+              <input type="text" id="car_model" name="car_model" required />
+              <div class="error-message" id="car_model_error"></div>
+            </div>
 
-    <div class="form-group">
-      <label for="car_brand">Car Brand:</label>
-      <input type="text" id="car_brand" name="car_brand" required value="{{ car.brand if car else '' }}" />
-      <div class="error-message" id="car_brand_error"></div>
+            <div class="form-group">
+              <label for="car_price">Rental Price (per day):</label>
+              <input type="number" id="car_price" name="car_price" required />
+              <div class="error-message" id="car_price_error"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="car_image">Car Image:</label>
+              <input type="text" id="car_image" name="car_image" />
+              <div class="error-message" id="car_image_error"></div>
+            </div>
+
+            <button type="submit" id="submitBtn">Add Car</button>
+          </form>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div class="footer-container">
+          <span>&copy; 2024 Rento. All rights reserved.</span>
+          <span>Contact: info@rento.com</span>
+        </div>
+      </footer>
     </div>
 
-    <div class="form-group">
-      <label for="car_model">Car Model:</label>
-      <input type="text" id="car_model" name="car_model" required value="{{ car.model if car else '' }}" />
-      <div class="error-message" id="car_model_error"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="car_price">Rental Price (per day):</label>
-      <input type="number" id="car_price" name="car_price" required value="{{ car.price_per_day if car else '' }}" />
-      <div class="error-message" id="car_price_error"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="car_image">Car Image:</label>
-      <input type="text" id="car_image" name="car_image" value="{{ car.image_url if car else '' }}" />
-      <div class="error-message" id="car_image_error"></div>
-    </div>
-
-    <button type="submit">{{ 'Update Car' if mode == 'edit' else 'Add Car' }}</button>
-  </form>
-</div>
-
-{% block scripts %}
-<script>
-const mode = "{{ mode }}";
-const carId = "{{ car.id if car else '' }}";
-
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('car_form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (mode === 'edit') {
-            editCar(e, carId);
-        } else {
-            addCar(e);
+    <script>
+      // Authentication check
+      function checkUserLoggedIn() {
+        const currentPath = window.location.pathname;
+        if (currentPath === '/signin' || currentPath === '/signup') {
+          return;
         }
-    });
-});
-</script>
-{% endblock %}
+        const user = localStorage.getItem('user');
+        if (!user) {
+          window.location.href = '/signin';
+        }
+      }
 
-{% endblock %}
+      // Logout function
+      function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "/signin";
+      }
+
+      // Run auth check when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        checkUserLoggedIn();
+        
+        // Show welcome message with username
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          try {
+            const user = JSON.parse(userData);
+            const name = user.first_name || user.email.split('@')[0];
+            document.getElementById('welcome-text').textContent = `Welcome, ${name}!`;
+          } catch (e) {
+            // If error, keep default welcome message
+          }
+        }
+
+        const form = document.getElementById('car_form');
+        const urlParams = new URLSearchParams(window.location.search);
+        const carId = urlParams.get('id');
+        const isEdit = carId !== null;
+
+        // Set page title and form title
+        document.getElementById('pageTitle').textContent = isEdit ? 'Edit Car | Rento' : 'Add Car | Rento';
+        document.getElementById('formTitle').textContent = isEdit ? 'Edit Car' : 'Add a New Car';
+        document.getElementById('submitBtn').textContent = isEdit ? 'Update Car' : 'Add Car';
+
+        // If editing, fetch car details
+        if (isEdit) {
+          fetch(`/cars/${carId}`)
+            .then(response => response.json())
+            .then(car => {
+              document.getElementById('car_brand').value = car.brand;
+              document.getElementById('car_model').value = car.model;
+              document.getElementById('car_price').value = car.price_per_day;
+              document.getElementById('car_image').value = car.image_url;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Failed to load car details');
+            });
+        }
+
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          if (!validation.validateForm(form)) {
+            return;
+          }
+
+          if (isEdit) {
+            editCar(e, carId);
+          } else {
+            addCar(e);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

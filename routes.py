@@ -1,9 +1,8 @@
 # This file handles all route definitions for the application.
 
-from flask import Blueprint, request, jsonify, render_template, redirect
-import re, json, os
-from utils import write_to_json, write_to_text, users_db  # Import helpers from utils
-from car import Car  # Import our Car class
+from flask import Blueprint, request, jsonify, redirect
+from utils import get_html
+from models import User, Car
 
 # Create a blueprint for grouping the routes
 main = Blueprint('main','app')
@@ -11,19 +10,42 @@ main = Blueprint('main','app')
 # Route for the homepage
 @main.route('/')
 def home():
-    cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
-    try:
-        with open(cars_file, 'r') as f:
-            cars_data = json.load(f)
-            cars = [Car(**car) for car in cars_data]  # Convert JSON data to Car objects
-    except Exception as e:
-        cars = []
-    return render_template('index.html', cars=cars)
+    html_page = get_html('index')
+    cars = Car.load_all()
+    
+    if not cars:
+        return html_page.replace("$car_cards$", '<p class="no-cars">No cars available. Add your first car!</p>')
+    
+    car_cards = ""
+    for car in cars:
+        # Create car card HTML with direct replacements
+        car_card = '''
+            <div class="car-card">
+                <img src="$image$" alt="$brand$ $model$">
+                <h2>$brand$ $model$</h2>
+                <p class="car-price"><span>Price:</span> $$price$/Day</p>
+                <div class="card-actions">
+                    <a href="/cars?id=$id$" class="edit-btn">Edit</a>
+                    <button class="delete-btn" onclick="openDeleteModal($id$, '$brand$ $model$')">Delete</button>
+                </div>
+            </div>
+        '''
+        
+        # Replace each placeholder with actual value
+        car_card = car_card.replace("$image$", car.get('image_url', '/static/images/default-car.jpg'))
+        car_card = car_card.replace("$brand$", car.get('brand', ''))
+        car_card = car_card.replace("$model$", car.get('model', ''))
+        car_card = car_card.replace("$price$", str(car.get('price_per_day', 0)))
+        car_card = car_card.replace("$id$", str(car.get('id', 0)))
+        
+        car_cards += car_card
+    
+    return html_page.replace("$car_cards$", car_cards)
 
-# GET: Render the sign-in page
+# GET: Render the signin page
 @main.route('/signin', methods=['GET'])
 def signin_page():
-    return render_template('signin.html')
+    return get_html('signin')
 
 # POST: Handle sign-in form submission
 @main.route('/signin', methods=['POST'])
@@ -36,167 +58,126 @@ def signin():
     if not email or not password:
         return jsonify({"message": "Email and password are required."}), 400
 
-    # Validate email format
-    if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
-        return jsonify({"message": "Invalid email format."}), 400
-
-    # Validate password strength
-    if (
-        len(password) < 8
-        or not re.search(r"[A-Za-z]", password)
-        or not re.search(r"[0-9]", password)
-        or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password)
-    ):
-        return jsonify({"message": "Weak password."}), 400
-
-    # Check if user exists in the JSON file
-    try:
-        with open(users_db, 'r') as file:
-            users = json.load(file)
-            for user in users:
-                if user["email"] == email and user["password"] == password:
-                    return jsonify(user), 200
-            return jsonify({"message": "Invalid email or password."}), 401
-    except FileNotFoundError:
-        return jsonify({"message": "User database not found."}), 500
-    except json.JSONDecodeError:
-        return jsonify({"message": "Error reading user database."}), 500
+    # Create user object and authenticate
+    user = User(None, None, email, password)
+    success, result = user.authenticate()
+    
+    if success:
+        return jsonify(result), 200
+    return jsonify({"message": result}), 401
 
 # GET: Render the signup page
 @main.route('/signup', methods=['GET'])
 def signup_page():
-    return render_template('signup.html')
+    return get_html('signup')
 
 # POST: Handle sign-up form submission
 @main.route('/signup', methods=['POST'])
 def signup():
     body = request.get_json()
 
-    # Collect user fields
-    new_user = {
-        "first_name": body.get("first_name"),
-        "last_name": body.get("last_name"),
-        "email": body.get("email"),
-        "password": body.get("password")
-    }
+    # Create user object
+    user = User(
+        first_name=body.get("first_name"),
+        last_name=body.get("last_name"),
+        email=body.get("email"),
+        password=body.get("password")
+    )
 
-    # Ensure no field is missing
-    for field, value in new_user.items():
-        if not value:
-            return jsonify({"message": f"{field.replace('_', ' ').title()} is required."}), 400
+    # Validate user data
+    is_valid, message = user.validate()
+    if not is_valid:
+        return jsonify({"message": message}), 400
 
-    # Email format check
-    if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', new_user['email']):
-        return jsonify({"message": "Invalid email format."}), 400
+    # Save user
+    success, message = user.save()
+    if success:
+        return jsonify({k: getattr(user, k) for k in ['first_name', 'last_name', 'email']}), 201
+    return jsonify({"message": message}), 400
 
-    # Password strength check
-    if (
-        len(new_user["password"]) < 8
-        or not re.search(r"[A-Za-z]", new_user["password"])
-        or not re.search(r"[0-9]", new_user["password"])
-        or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", new_user["password"])
-    ):
-        return jsonify({"message": "Weak password."}), 400
-
-    # Save the user to both JSON and text
-    write_to_json(**new_user)
-    write_to_text(**new_user)
-
-    # Return only safe info
-    return jsonify({k: new_user[k] for k in ["first_name", "last_name", "email"]}), 201
-
-# GET: Render add car page
+# GET: Render add/edit car page
 @main.route('/cars', methods=['GET'])
-def add_car_page():
-    return render_template('car_details.html', mode='add', car=None)
+def car_page():
+    car_id = request.args.get('id')
+    if car_id:
+        car = Car.load_by_id(int(car_id))
+        if not car:
+            return redirect('/')
+    return get_html('car_details')
 
-# POST: Handle add car form submission
+# GET: Get all cars
+@main.route('/cars/list', methods=['GET'])
+def get_all_cars():
+    cars = Car.load_all()
+    return jsonify(cars)
+
+# GET: Get single car
+@main.route('/cars/<int:car_id>', methods=['GET'])
+def get_car(car_id):
+    car = Car.load_by_id(car_id)
+    if car:
+        return jsonify(car)
+    return jsonify({"message": "Car not found"}), 404
+
+# POST: Add new car
 @main.route('/cars', methods=['POST'])
-def add_car_submit():
-    # Extract form data
+def add_car():
     body = request.get_json()
     
-    # Load cars
-    cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
-    try:
-        with open(cars_file, 'r') as f:
-            cars_data = json.load(f)
-    except Exception as e:
-        cars_data = []
-    
-    # Generate new id
-    new_id = max([car.get('id', 0) for car in cars_data], default=0) + 1
-    
-    # Create new car using Car class
-    new_car = Car(
-        id=new_id,
-        model=body.get('model'),
-        brand=body.get('brand'),
-        price_per_day=int(body.get('price_per_day')),
-        image_url=body.get('image_url')
+    # Create car object
+    car = Car(
+        brand=body.get("brand"),
+        model=body.get("model"),
+        price_per_day=body.get("price_per_day"),
+        image_url=body.get("image_url")
     )
     
-    # Convert car object to dict and append to cars list
-    cars_data.append(new_car.__dict__)
+    # Validate car data
+    is_valid, message = car.validate()
+    if not is_valid:
+        return jsonify({"message": message}), 400
     
-    # Save to file
-    with open(cars_file, 'w') as f:
-        json.dump(cars_data, f, indent=2)
-    
-    return jsonify({"message": "Car added successfully!"}), 200
+    # Save car
+    success, message = car.save()
+    if success:
+        return jsonify({"message": message}), 200
+    return jsonify({"message": message}), 400
 
-# GET and POST: Edit car
-@main.route('/cars/<int:car_id>', methods=['GET', 'POST'])
-def car_detail_page(car_id):
-    cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
-    try:
-        with open(cars_file, 'r') as f:
-            cars_data = json.load(f)
-    except Exception as e:
-        cars_data = []
+# PUT: Update car
+@main.route('/cars/<int:car_id>', methods=['PUT'])
+def update_car(car_id):
+    body = request.get_json()
     
-    car_data = next((car for car in cars_data if car.get('id') == car_id), None)
+    # Create car object
+    car = Car(
+        brand=body.get("brand"),
+        model=body.get("model"),
+        price_per_day=body.get("price_per_day"),
+        image_url=body.get("image_url"),
+        car_id=car_id
+    )
     
-    if request.method == 'POST':
-        body = request.get_json()
-        # Create updated car using Car class
-        updated_car = Car(
-            id=car_id,
-            model=body.get('model'),
-            brand=body.get('brand'),
-            price_per_day=int(body.get('price_per_day')),
-            image_url=body.get('image_url')
-        )
-        
-        # Update car in the list
-        for i, car in enumerate(cars_data):
-            if car.get('id') == car_id:
-                cars_data[i] = updated_car.__dict__
-                break
-        
-        # Save to file
-        with open(cars_file, 'w') as f:
-            json.dump(cars_data, f, indent=2)
-        
-        return jsonify({"message": "Car updated successfully!"}), 200
+    # Validate car data
+    is_valid, message = car.validate()
+    if not is_valid:
+        return jsonify({"message": message}), 400
     
-    return render_template('car_details.html', mode='edit', car=car_data)
+    # Save car
+    success, message = car.save()
+    if success:
+        return jsonify({"message": message}), 200
+    return jsonify({"message": message}), 400
 
-# DELETE: Delete a car
-@main.route('/delete/<int:car_id>')
+# DELETE: Delete car
+@main.route('/cars/<int:car_id>', methods=['DELETE'])
 def delete_car(car_id):
-    cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
-    try:
-        with open(cars_file, 'r') as f:
-            cars_data = json.load(f)
-        
-        # Remove the car
-        cars_data = [car for car in cars_data if car.get('id') != car_id]
-        
-        # Save back to file
-        with open(cars_file, 'w') as f:
-            json.dump(cars_data, f, indent=2)
-        
-        return redirect('/')
-    except Exception as e:
-        return redirect('/')
+    car = Car(None, None, None, None, car_id)
+    success, message = car.delete()
+    if success:
+        return jsonify({"message": message}), 200
+    return jsonify({"message": message}), 400
+
+# Logout route
+@main.route('/logout')
+def logout():
+    return redirect('/signin')

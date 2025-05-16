@@ -1,26 +1,149 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home | Rento</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/static/styles/base.css" />
+    <link rel="stylesheet" href="/static/styles/car_details.css" />
+    <script src="/static/js/car.js"></script>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <nav class="navbar">
+        <div class="navbar-container">
+          <div class="navbar-brand">
+            <a href="/">
+              <img src="/static/images/logo.png" alt="Rento Logo" class="logo"  />
+            </a>
+            <span id="welcome-text">Welcome!</span>
+          </div>
+          <ul class="navbar-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/#cars">My Cars</a></li>
+            <li>
+              <a href="javascript:void(0)" onclick="logout()" class="logout-link"><i class="fas fa-sign-out-alt"></i></a>
+            </li>
+          </ul>
+        </div>
+      </nav>
 
-{% block title %}Home | Rento{% endblock %}
+      <div class="content">
+        <div class="home-header">
+          <h1>Explore Our Cars</h1>
+          <a href="/cars" class="add-car-btn">+ Add New Car</a>
+        </div>
+        <section id="cars" class="car-cards-section">
+          <div class="car-cards-container" id="carCardsContainer">
+            $car_cards$
+          </div>
+        </section>
 
-{% block content %}
-<div class="home-header">
-  <h1>Explore Our Cars</h1>
-  <a href="/cars" class="add-car-btn">+ Add New Car</a>
-</div>
-<section id="cars" class="car-cards-section">
-  <div class="car-cards-container">
-    {% for car in cars %}
-    <div class="car-card">
-      <img src="{{ car.image_url }}" alt="{{ car.brand }} {{ car.model }}">
-      <h2>{{ car.brand }} {{ car.model }}</h2>
-      <p class="car-price"><span>Price:</span> ${{ car.price_per_day }}/Day</p>
-      <div class="card-actions">
-        <a href="/cars/{{ car.id }}" class="edit-btn">Edit</a>
-        <a href="/delete/{{ car.id }}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this car?')">Delete</a>
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="modal">
+          <div class="modal-content">
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete <span id="carName"></span>?</p>
+            <div class="modal-actions">
+              <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+              <a id="confirmDeleteBtn" href="#" class="delete-btn">Delete</a>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <footer class="footer">
+        <div class="footer-container">
+          <span>&copy; 2024 Rento. All rights reserved.</span>
+          <span>Contact: info@rento.com</span>
+        </div>
+      </footer>
     </div>
-    {% endfor %}
-  </div>
-</section>
-{% endblock %}
+
+    <script>
+      function openDeleteModal(carId, carName) {
+        const modal = document.getElementById('deleteModal');
+        const carNameSpan = document.getElementById('carName');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        
+        carNameSpan.textContent = carName;
+        confirmDeleteBtn.onclick = async function() {
+          try {
+            const response = await fetch(`/cars/${carId}`, {
+              method: 'DELETE'
+            });
+            const result = await response.json();
+            
+            if (response.ok) {
+              window.location.reload();
+            } else {
+              alert(result.message || 'Failed to delete car');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete car');
+          }
+          closeDeleteModal();
+        };
+        modal.style.display = 'flex';
+      }
+
+      function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.style.display = 'none';
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (event.target == modal) {
+          closeDeleteModal();
+        }
+      }
+
+      // Authentication check
+      function checkUserLoggedIn() {
+        const currentPath = window.location.pathname;
+        if (currentPath === '/signin' || currentPath === '/signup') {
+          return;
+        }
+        const user = localStorage.getItem('user');
+        if (!user) {
+          window.location.href = '/signin';
+        }
+      }
+
+      // Logout function
+      function logout() {
+        localStorage.removeItem("user");
+        window.location.href = "/signin";
+      }
+
+      // Run auth check when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        checkUserLoggedIn();
+        
+        // Show welcome message with username
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          try {
+            const user = JSON.parse(userData);
+            const name = user.first_name || user.email.split('@')[0];
+            document.getElementById('welcome-text').textContent = `Welcome, ${name}!`;
+          } catch (e) {
+            // If error, keep default welcome message
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
 

@@ -197,6 +197,11 @@ input.error {
 }
 
 /* Car Cards Styles */
+.car-cards-section {
+  position: relative;
+  min-height: 300px;
+}
+
 .car-cards-container {
   display: flex;
   flex-wrap: wrap;
@@ -293,6 +298,46 @@ input.error {
   color: #2a2640;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 9px;
+  padding: 0.3rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#searchInput {
+  border: none;
+  padding: 0.5rem;
+  width: 200px;
+  font-size: 14px;
+  outline: none;
+  border-radius: 5px;
+}
+
+#searchBtn {
+  background: none;
+  border: none;
+  color: #2a2640;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+#searchBtn:hover {
+  color: #8e44ad;
+}
+
 /* Modal Styles */
 .modal {
   display: none;
@@ -356,4 +401,27 @@ input.error {
 
 .modal .delete-btn {
   margin: 0;
+}
+
+/* No Results Message */
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #2a2640;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+
+.no-results i {
+  font-size: 3rem;
+  color: #8e44ad;
+  margin-bottom: 1rem;
+}
+
+.no-results p {
+  font-size: 1.2rem;
+  color: #666;
 }

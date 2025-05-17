@@ -39,11 +39,21 @@
       <div class="content">
         <div class="home-header">
           $heading$
-          <a href="/cars" class="add-car-btn">+ Add New Car</a>
+          <div class="header-actions">
+            <div class="search-container">
+              <input type="text" id="searchInput" placeholder="Search by brand..." />
+              <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <a href="/cars" class="add-car-btn">+ Add New Car</a>
+          </div>
         </div>
         <section id="cars" class="car-cards-section">
           <div class="car-cards-container" id="carCardsContainer">
             $car_cards$
+          </div>
+          <div id="noResultsMessage" class="no-results" style="display: none;">
+            <i class="fas fa-search"></i>
+            <p>No cars found matching your search.</p>
           </div>
         </section>
 
@@ -108,6 +118,51 @@
           closeDeleteModal();
         }
       }
+
+      // Search functionality
+      function searchCars() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const carCards = document.querySelectorAll('.car-card');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        let hasResults = false;
+        
+        carCards.forEach(card => {
+          const brand = card.querySelector('h2').textContent.toLowerCase();
+          if (brand.includes(searchTerm)) {
+            card.style.display = 'flex';
+            hasResults = true;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // Show/hide no results message
+        if (searchTerm && !hasResults) {
+          noResultsMessage.style.display = 'block';
+        } else {
+          noResultsMessage.style.display = 'none';
+        }
+      }
+
+      // Add event listeners for search
+      document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        // Search on button click
+        searchBtn.addEventListener('click', searchCars);
+
+        // Search on Enter key
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            searchCars();
+          }
+        });
+
+        // Search as you type (optional)
+        searchInput.addEventListener('input', searchCars);
+      });
 
       // Authentication check
       function checkUserLoggedIn() {

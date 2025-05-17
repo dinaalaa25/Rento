@@ -26,3 +26,10 @@ def get_html(page_name):
     except FileNotFoundError:
         return f"Error: {page_name}.html not found"
 
+def get_heading():
+    try:
+        with open('static/text/headings.txt', 'r') as f:
+            return f"<h1>{f.readline().strip()}</h1>"
+    except:
+        return "<h1>Explore Our Cars</h1>"
+

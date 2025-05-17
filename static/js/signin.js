@@ -49,5 +49,10 @@ async function handleSignin(e) {
         localStorage.setItem("user", JSON.stringify(result));
         window.location.href = "/";
       }
+      else{
+        document.getElementById("password_error").textContent =
+          "Invalid email or password.";
+        return;
+      }
     }
   

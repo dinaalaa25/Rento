@@ -1,37 +1,89 @@
 [
-  {
-    "id": 1,
-    "model": "Corolla",
-    "brand": "Toyota",
-    "price_per_day": 50,
-    "image_url": "/static/images/1.jpg"
-  },
-  {
-    "id": 4,
-    "model": "Elantraaaaaaaa",
-    "brand": "Hyundaiiiiiyyyyyy",
-    "price_per_day": 45,
-    "image_url": "/static/images/1.jpg"
-  },
-  {
-    "id": 5,
-    "model": "Mustang",
-    "brand": "Ford",
-    "price_per_day": 75,
-    "image_url": "/static/images/1.jpg"
-  },
-  {
-    "id": 6,
-    "model": "Camry",
-    "brand": "Toyota",
-    "price_per_day": 55,
-    "image_url": "/static/images/1.jpg"
-  },
-  {
-    "id": 7,
-    "model": "Altima",
-    "brand": "Nissan",
-    "price_per_day": 52,
-    "image_url": "/static/images/1.jpg"
-  }
+    {
+        "id": 1,
+        "brand": "Toyota",
+        "model": "Corolla",
+        "price_per_day": "50",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 2,
+        "brand": "Toyota",
+        "model": "Camry",
+        "price_per_day": "55",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 3,
+        "brand": "BMW",
+        "model": "X5",
+        "price_per_day": "95",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 4,
+        "brand": "BMW",
+        "model": "3 Series",
+        "price_per_day": "85",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 5,
+        "brand": "Honda",
+        "model": "Civic",
+        "price_per_day": "45",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 6,
+        "brand": "Ford",
+        "model": "Focus",
+        "price_per_day": "40",
+        "image_url": "/static/images/1.jpg"
+    },
+    {
+        "id": 7,
+        "brand": "Nissan",
+        "model": "Altima",
+        "price_per_day": "48",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 8,
+        "brand": "Hyundai",
+        "model": "Elantra",
+        "price_per_day": "43",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 9,
+        "brand": "Kia",
+        "model": "Sportageee",
+        "price_per_day": "52",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 10,
+        "brand": "Toyota",
+        "model": "Corolla",
+        "price_per_day": "50",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    },
+    {
+        "id": 11,
+        "brand": "Nissannn",
+        "model": "C-Class",
+        "price_per_day": "70000",
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
+    }
 ]

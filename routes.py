@@ -1,6 +1,6 @@
 # This file handles all route definitions for the application.
 
-from flask import Blueprint, request, jsonify, redirect
+from flask import Blueprint, request, jsonify, redirect, session
 from utils import get_html, get_heading
 from models import User, Car
 
@@ -12,7 +12,7 @@ main = Blueprint('main','app')
 def home():
     html_page = get_html('index')
     cars = Car.load_all()
-    
+    user_id = session.get('user_id')
     # Get the heading from the text file and replace the placeholder
     heading = get_heading()
     html_page = html_page.replace("$heading$", heading)
@@ -29,8 +29,7 @@ def home():
                 <h2>$brand$ $model$</h2>
                 <p class="car-price"><span>Price:</span> $$price$/Day</p>
                 <div class="card-actions">
-                    <a href="/cars?id=$id$" class="edit-btn">Edit</a>
-                    <button class="delete-btn" onclick="openDeleteModal($id$, '$brand$ $model$')">Delete</button>
+                    <button class="delete-btn" onclick="rentCar(event, $car_id$)">Rent Now</button>
                 </div>
             </div>
         '''
@@ -40,11 +39,13 @@ def home():
         car_card = car_card.replace("$brand$", car.get('brand', ''))
         car_card = car_card.replace("$model$", car.get('model', ''))
         car_card = car_card.replace("$price$", str(car.get('price_per_day', 0)))
-        car_card = car_card.replace("$id$", str(car.get('id', 0)))
+        car_card = car_card.replace("$car_id$", str(car.get('id', 0)))
         
         car_cards += car_card
     
-    return html_page.replace("$car_cards$", car_cards)
+    html_page = html_page.replace("$car_cards$", car_cards)
+    html_page = html_page.replace("$user_id$", str(user_id))
+    return html_page
 
 # GET: Render the signin page
 @main.route('/signin', methods=['GET'])
@@ -67,6 +68,8 @@ def signin():
     success, result = user.authenticate()
     
     if success:
+        # Store user ID in session
+        session['user_id'] = result.get('id')
         return jsonify(result), 200
     return jsonify({"message": result}), 401
 
@@ -103,11 +106,15 @@ def signup():
 @main.route('/cars', methods=['GET'])
 def car_page():
     car_id = request.args.get('id')
+    user_id = session.get('user_id')
+    
     if car_id:
         car = Car.load_by_id(int(car_id))
         if not car:
             return redirect('/')
-    return get_html('car_details')
+    html_page = get_html('car_details')
+    html_page = html_page.replace("$user_id$", str(user_id))
+    return html_page
 
 # GET: Get all cars
 @main.route('/cars/list', methods=['GET'])
@@ -127,13 +134,14 @@ def get_car(car_id):
 @main.route('/cars', methods=['POST'])
 def add_car():
     body = request.get_json()
-    
+    user_id = session.get('user_id')
     # Create car object
     car = Car(
         brand=body.get("brand"),
         model=body.get("model"),
         price_per_day=body.get("price_per_day"),
-        image_url=body.get("image_url")
+        image_url=body.get("image_url"),
+        user_id=user_id
     )
     
     # Validate car data
@@ -184,4 +192,51 @@ def delete_car(car_id):
 # Logout route
 @main.route('/logout')
 def logout():
+    # Clear the session
+    session.clear()
     return redirect('/signin')
+
+# GET: Render my cars page
+@main.route('/<int:user_id>/cars', methods=['GET'])
+def my_cars_page(user_id):
+    html_page = get_html('my_cars')
+
+    car_cards = ""
+    cars = Car.load_all(user_id=user_id)
+    for car in cars:    
+        # Create car card HTML with direct replacements
+        car_card = '''
+            <div class="car-card">
+                <img src="$image$" alt="$brand$ $model$">
+                <h2>$brand$ $model$</h2>
+                <p class="car-price"><span>Price:</span> $$price$/Day</p>
+                <div class="card-actions">
+                    <a href="/cars?id=$id$" class="edit-btn">Edit</a>
+                    <button class="delete-btn" onclick="openDeleteModal($id$, '$brand$ $model$')">Delete</button>
+                </div>
+            </div>
+        '''
+        
+        # Replace each placeholder with actual value
+        car_card = car_card.replace("$image$", car.get('image_url', '/static/images/default-car.jpg'))
+        car_card = car_card.replace("$brand$", car.get('brand', ''))
+        car_card = car_card.replace("$model$", car.get('model', ''))
+        car_card = car_card.replace("$price$", str(car.get('price_per_day', 0)))
+        car_card = car_card.replace("$id$", str(car.get('id', 0)))
+        
+        car_cards += car_card
+    html_page = html_page.replace("$car_cards$", car_cards)
+    html_page = html_page.replace("$user_id$", str(user_id))
+    return html_page
+
+@main.route('/cars/<int:car_id>/rent', methods=['POST'])
+def rent_car(car_id):
+    old_car = Car.load_by_id(car_id)
+    user_id = session.get('user_id')
+    if not old_car:
+        return jsonify({"message": "Car not found"}), 404
+    car = Car(old_car['brand'], old_car['model'], old_car['price_per_day'], old_car['image_url'], user_id, car_id)
+    success, message = car.rent()
+    if success:
+        return jsonify({"message": message}), 200
+    return jsonify({"message": message}), 400

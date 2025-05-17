@@ -5,8 +5,7 @@ async function addCar(e) {
     brand: document.getElementById("car_brand").value,
     price_per_day: document.getElementById("car_price").value,
     image_url: document.getElementById("car_image").value,
-  };
-
+  };  
   try {
     const response = await fetch("/cars", {
       method: "POST",
@@ -44,6 +43,29 @@ async function editCar(e, carId) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(car),
+    });
+    const result = await response.json();
+    
+    if (response.ok) {
+      window.location.href = "/";
+    } else {
+      alert(result.message || "Failed to edit car");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Failed to edit car");
+  }
+}
+
+async function rentCar(e, carId) {
+  console.log("rentCar", e, carId);
+  e.preventDefault();
+  try {
+    const response = await fetch(`/cars/${carId}/rent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
     });
     const result = await response.json();
     

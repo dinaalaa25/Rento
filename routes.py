@@ -1,7 +1,7 @@
 # This file handles all route definitions for the application.
 
 from flask import Blueprint, request, jsonify, redirect
-from utils import get_html
+from utils import get_html, get_heading
 from models import User, Car
 
 # Create a blueprint for grouping the routes
@@ -12,6 +12,10 @@ main = Blueprint('main','app')
 def home():
     html_page = get_html('index')
     cars = Car.load_all()
+    
+    # Get the heading from the text file and replace the placeholder
+    heading = get_heading()
+    html_page = html_page.replace("$heading$", heading)
     
     if not cars:
         return html_page.replace("$car_cards$", '<p class="no-cars">No cars available. Add your first car!</p>')

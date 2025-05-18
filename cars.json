@@ -51,16 +51,14 @@
         "brand": "Nissan",
         "model": "Altima",
         "price_per_day": "48",
-        "image_url": "/static/images/1.jpg",
-        "user_id": 1
+        "image_url": "/static/images/1.jpg"
     },
     {
         "id": 8,
         "brand": "Hyundai",
         "model": "Elantra",
         "price_per_day": "43",
-        "image_url": "/static/images/1.jpg",
-        "user_id": 1
+        "image_url": "/static/images/1.jpg"
     },
     {
         "id": 9,
@@ -83,6 +81,13 @@
         "brand": "Nissannn",
         "model": "C-Class",
         "price_per_day": "70000",
+        "image_url": "/static/images/1.jpg"
+    },
+    {
+        "id": 12,
+        "brand": "Mercedes",
+        "model": "C-Class",
+        "price_per_day": "1200",
         "image_url": "/static/images/1.jpg",
         "user_id": 1
     }

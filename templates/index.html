@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie-edge"/>
     <title>Home | Rento</title>
     <link
       rel="stylesheet"
@@ -79,11 +80,40 @@
     </div>
 
     <script>
+      // Check authentication immediately when page loads
+      window.onload = function() {
+        const user = JSON.parse(localStorage.getItem("user") ?? "{}");
+        if (!user.first_name) {
+          window.location.href = "/signin";
+          return;
+        }
+        
+        // Update welcome message
+        document.getElementById("welcome-text").textContent = `Welcome, ${user.first_name}!`;
+        
+        // Initialize search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        // Search on button click
+        searchBtn.addEventListener('click', searchCars);
+
+        // Search on Enter key
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            searchCars();
+          }
+        });
+
+        // Search as you type
+        searchInput.addEventListener('input', searchCars);
+      };
+
       function openDeleteModal(carId, carName) {
         const modal = document.getElementById('deleteModal');
         const carNameSpan = document.getElementById('carName');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        
+
         carNameSpan.textContent = carName;
         confirmDeleteBtn.onclick = async function() {
           try {
@@ -91,7 +121,7 @@
               method: 'DELETE'
             });
             const result = await response.json();
-            
+
             if (response.ok) {
               window.location.reload();
             } else {
@@ -126,7 +156,7 @@
         const carCards = document.querySelectorAll('.car-card');
         const noResultsMessage = document.getElementById('noResultsMessage');
         let hasResults = false;
-        
+
         carCards.forEach(card => {
           const brand = card.querySelector('h2').textContent.toLowerCase();
           if (brand.includes(searchTerm)) {
@@ -145,59 +175,11 @@
         }
       }
 
-      // Add event listeners for search
-      document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-
-        // Search on button click
-        searchBtn.addEventListener('click', searchCars);
-
-        // Search on Enter key
-        searchInput.addEventListener('keypress', function(e) {
-          if (e.key === 'Enter') {
-            searchCars();
-          }
-        });
-
-        // Search as you type (optional)
-        searchInput.addEventListener('input', searchCars);
-      });
-
-      // Authentication check
-      function checkUserLoggedIn() {
-        const currentPath = window.location.pathname;
-        if (currentPath === '/signin' || currentPath === '/signup') {
-          return;
-        }
-        const user = localStorage.getItem('user');
-        if (!user) {
-          window.location.href = '/signin';
-        }
-      }
-
       // Logout function
       function logout() {
         localStorage.removeItem("user");
         window.location.href = "/signin";
       }
-
-      // Run auth check when page loads
-      document.addEventListener('DOMContentLoaded', function() {
-        checkUserLoggedIn();
-        
-        // Show welcome message with username
-        const userData = localStorage.getItem('user');
-        if (userData) {
-          try {
-            const user = JSON.parse(userData);
-            const name = user.first_name || user.email.split('@')[0];
-            document.getElementById('welcome-text').textContent = `Welcome, ${name}!`;
-          } catch (e) {
-            // If error, keep default welcome message
-          }
-        }
-      });
     </script>
   </body>
 </html>

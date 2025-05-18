@@ -11,8 +11,9 @@ main = Blueprint('main','app')
 @main.route('/')
 def home():
     html_page = get_html('index')
-    cars = Car.load_all()
+    cars = Car.load_all(rented_by_id=None)
     user_id = session.get('user_id')
+    cars = [car for car in cars if car.get('user_id') != user_id]
     # Get the heading from the text file and replace the placeholder
     heading = get_heading()
     html_page = html_page.replace("$heading$", heading)
@@ -99,7 +100,9 @@ def signup():
     # Save user
     success, message = user.save()
     if success:
-        return jsonify({k: getattr(user, k) for k in ['first_name', 'last_name', 'email']}), 201
+        user_data = {k: getattr(user, k) for k in ['first_name', 'last_name', 'email', 'id']}
+        session['user_id'] = user_data['id']
+        return jsonify(user_data), 201
     return jsonify({"message": message}), 400
 
 # GET: Render add/edit car page
@@ -115,12 +118,6 @@ def car_page():
     html_page = get_html('car_details')
     html_page = html_page.replace("$user_id$", str(user_id))
     return html_page
-
-# GET: Get all cars
-@main.route('/cars/list', methods=['GET'])
-def get_all_cars():
-    cars = Car.load_all()
-    return jsonify(cars)
 
 # GET: Get single car
 @main.route('/cars/<int:car_id>', methods=['GET'])
@@ -158,14 +155,29 @@ def add_car():
 # PUT: Update car
 @main.route('/cars/<int:car_id>', methods=['PUT'])
 def update_car(car_id):
+    # Get current user's ID from session
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"message": "You must be logged in to update a car"}), 401
+
+    # Get the existing car
+    existing_car = Car.load_by_id(car_id)
+    if not existing_car:
+        return jsonify({"message": "Car not found"}), 404
+
+    # Check if the user owns the car
+    if existing_car.get('user_id') != user_id:
+        return jsonify({"message": "You can only update your own cars"}), 403
+
     body = request.get_json()
     
-    # Create car object
+    # Create car object with user_id
     car = Car(
         brand=body.get("brand"),
         model=body.get("model"),
         price_per_day=body.get("price_per_day"),
         image_url=body.get("image_url"),
+        user_id=user_id,  # Add the user_id
         car_id=car_id
     )
     
@@ -183,7 +195,30 @@ def update_car(car_id):
 # DELETE: Delete car
 @main.route('/cars/<int:car_id>', methods=['DELETE'])
 def delete_car(car_id):
-    car = Car(None, None, None, None, car_id)
+    # Get current user's ID from session
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"message": "You must be logged in to delete a car"}), 401
+
+    # Get the existing car
+    existing_car = Car.load_by_id(car_id)
+    if not existing_car:
+        return jsonify({"message": "Car not found"}), 404
+
+    # Check if the user owns the car
+    if existing_car.get('user_id') != user_id:
+        return jsonify({"message": "You can only delete your own cars"}), 403
+
+    # Create car object with the existing car's data
+    car = Car(
+        brand=existing_car['brand'],
+        model=existing_car['model'],
+        price_per_day=existing_car['price_per_day'],
+        image_url=existing_car['image_url'],
+        user_id=user_id,
+        car_id=car_id
+    )
+    
     success, message = car.delete()
     if success:
         return jsonify({"message": message}), 200
@@ -200,9 +235,15 @@ def logout():
 @main.route('/<int:user_id>/cars', methods=['GET'])
 def my_cars_page(user_id):
     html_page = get_html('my_cars')
+    user_id = session.get('user_id')
 
+    cars = Car.load_all()
+    cars = [car for car in cars if car.get('user_id') == user_id]
+    
+    if not cars:
+        return html_page.replace("$car_cards$", '<p class="no-cars">You haven\'t added any cars yet. Add your first car!</p>')
+    
     car_cards = ""
-    cars = Car.load_all(user_id=user_id)
     for car in cars:    
         # Create car card HTML with direct replacements
         car_card = '''
@@ -233,10 +274,16 @@ def my_cars_page(user_id):
 def rent_car(car_id):
     old_car = Car.load_by_id(car_id)
     user_id = session.get('user_id')
+    
     if not old_car:
         return jsonify({"message": "Car not found"}), 404
-    car = Car(old_car['brand'], old_car['model'], old_car['price_per_day'], old_car['image_url'], user_id, car_id)
+    car = Car(old_car['brand'], old_car['model'], old_car['price_per_day'], old_car['image_url'], old_car['user_id'], user_id, car_id)
     success, message = car.rent()
     if success:
         return jsonify({"message": message}), 200
     return jsonify({"message": message}), 400
+
+# Catch-all route for undefined routes
+@main.route('/<path:path>')
+def catch_all(path):
+    return redirect('/signin')

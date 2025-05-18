@@ -79,13 +79,14 @@ class User:
 
 
 class Car:
-    def __init__(self, brand, model, price_per_day, image_url, user_id, car_id=None):
+    def __init__(self, brand, model, price_per_day, image_url, user_id, rented_by_id = None, car_id=None):
         self.id = car_id
         self.brand = brand
         self.model = model
         self.price_per_day = price_per_day
         self.image_url = image_url
         self.user_id = user_id
+        self.rented_by_id = rented_by_id
         self.cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
 
     def validate(self):
@@ -103,15 +104,16 @@ class Car:
         return True, "Car data is valid"
 
     @classmethod
-    def load_all(cls, user_id=None):
+    def load_all(cls, rented_by_id=None):
         """Load all cars from JSON file"""
         cars_file = os.path.join(os.path.dirname(__file__), 'cars.json')
         try:
             if os.path.exists(cars_file):
                 with open(cars_file, 'r') as f:
                     cars = json.load(f)
-                    cars = [car for car in cars if car.get('user_id') == user_id]
-                    return cars
+                    cars = [car for car in cars if car.get('rented_by_id') == rented_by_id]
+                return cars
+                
             return []
         except Exception as e:
             print(f"Error loading cars: {str(e)}")
@@ -143,7 +145,8 @@ class Car:
                 'model': self.model,
                 'price_per_day': self.price_per_day,
                 'image_url': self.image_url,
-                'user_id': self.user_id
+                'user_id': self.user_id,
+                'rented_by_id': self.rented_by_id
             }
             
             # Update existing car or add new one
@@ -190,7 +193,7 @@ class Car:
         if car is None:
             return False, "Car not found"
         
-        car['user_id'] = self.user_id
+        car['rented_by_id'] = self.rented_by_id
         self.save()
         return True, "Car rented successfully"
        

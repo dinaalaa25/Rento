@@ -23,6 +23,17 @@ async function handleSignup(e) {
       "Last name is required.";
     return;
   }
+  if(first_name.value.trim().length < 3) {
+    document.getElementById("first_name_error").textContent =
+      "First name must be at least 3 characters long.";
+    return;
+  }
+
+  if (last_name.value.trim().length < 3) {
+    document.getElementById("last_name_error").textContent =
+      "Last name must be at least 3 characters long.";
+    return;
+  }
 
   // Email validation
   if (!/^[\w\.-]+@[\w\.-]+\.\w+$/.test(email.value.trim())) {
@@ -72,5 +83,8 @@ async function handleSignup(e) {
     if (response.ok) {
       localStorage.setItem("user", JSON.stringify(result));
       window.location.href = "/";
+    }
+    else{
+      document.getElementById("signup_error").textContent = result.message;
     }
   }

@@ -45,9 +45,9 @@ async function editCar(e, carId) {
       body: JSON.stringify(car),
     });
     const result = await response.json();
-    
     if (response.ok) {
-      window.location.href = "/";
+      const user = JSON.parse(localStorage.getItem('user'));
+      window.location.href = `/${user.id}/cars`;
     } else {
       alert(result.message || "Failed to edit car");
     }

@@ -1,30 +1,23 @@
 [
     {
         "id": 1,
-        "brand": "Toyota",
-        "model": "Corolla",
-        "price_per_day": "50",
-        "image_url": "/static/images/1.jpg",
-        "user_id": 1
-    },
-    {
-        "id": 2,
-        "brand": "Toyota",
+        "brand": "Toyotaaaa",
         "model": "Camry",
         "price_per_day": "55",
         "image_url": "/static/images/1.jpg",
-        "user_id": 1
+        "user_id": 2
     },
     {
-        "id": 3,
+        "id": 2,
         "brand": "BMW",
         "model": "X5",
         "price_per_day": "95",
         "image_url": "/static/images/1.jpg",
-        "user_id": 1
+        "user_id": 1,
+        "rented_by_id": 1
     },
     {
-        "id": 4,
+        "id": 3,
         "brand": "BMW",
         "model": "3 Series",
         "price_per_day": "85",
@@ -32,62 +25,43 @@
         "user_id": 1
     },
     {
-        "id": 5,
+        "id": 4,
         "brand": "Honda",
         "model": "Civic",
         "price_per_day": "45",
         "image_url": "/static/images/1.jpg",
-        "user_id": 1
+        "user_id": 2,
+        "rented_by_id": 1
     },
     {
-        "id": 6,
-        "brand": "Ford",
-        "model": "Focus",
-        "price_per_day": "40",
-        "image_url": "/static/images/1.jpg"
-    },
-    {
-        "id": 7,
+        "id": 5,
         "brand": "Nissan",
         "model": "Altima",
         "price_per_day": "48",
-        "image_url": "/static/images/1.jpg"
+        "image_url": "/static/images/1.jpg",
+        "user_id": 2
     },
     {
-        "id": 8,
+        "id": 6,    
         "brand": "Hyundai",
         "model": "Elantra",
         "price_per_day": "43",
-        "image_url": "/static/images/1.jpg"
+        "image_url": "/static/images/1.jpg",
+        "user_id": 1
     },
     {
-        "id": 9,
+        "id": 7,
         "brand": "Kia",
         "model": "Sportageee",
         "price_per_day": "52",
         "image_url": "/static/images/1.jpg",
-        "user_id": 1
+        "user_id": 2
     },
     {
-        "id": 10,
-        "brand": "Toyota",
-        "model": "Corolla",
-        "price_per_day": "50",
-        "image_url": "/static/images/1.jpg",
-        "user_id": 1
-    },
-    {
-        "id": 11,
+        "id": 8,
         "brand": "Nissannn",
-        "model": "C-Class",
-        "price_per_day": "70000",
-        "image_url": "/static/images/1.jpg"
-    },
-    {
-        "id": 12,
-        "brand": "Mercedes",
-        "model": "C-Class",
-        "price_per_day": "1200",
+        "model": "C-Classsssssssss",
+        "price_per_day": "5000",
         "image_url": "/static/images/1.jpg",
         "user_id": 1
     }

@@ -121,7 +121,10 @@ class Car:
     def load_by_id(cls, car_id):
         """Load a specific car by ID"""
         cars = cls.load_all()
-        return next((car for car in cars if car.get('id') == car_id), None)
+        for car in cars:
+            if car.get('id') == car_id:
+                return car
+        return None
 
     def save(self):
         """Saves car to JSON file"""
@@ -148,7 +151,11 @@ class Car:
             }
             
             # Update existing car or add new one
-            car_index = next((i for i, car in enumerate(cars) if car.get('id') == self.id), None)
+            car_index = None
+            for i in range(len(cars)):
+                if cars[i].get('id') == self.id:
+                    car_index = i
+                    break
             if car_index is not None:
                 cars[car_index] = car_data
             else:

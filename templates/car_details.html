@@ -78,7 +78,35 @@
       </footer>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <i class="fas"></i>
+      <span id="toastMessage"></span>
+    </div>
+
     <script>
+      // Toast notification function
+      function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const icon = toast.querySelector('i');
+        
+        // Set message and icon
+        toastMessage.textContent = message;
+        icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+        
+        // Set toast type
+        toast.className = `toast ${type}`;
+        
+        // Show toast
+        toast.classList.add('show');
+        
+        // Hide toast after 3 seconds
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      }
+
       // Authentication check
       function checkUserLoggedIn() {
         const currentPath = window.location.pathname;
@@ -152,6 +180,76 @@
           }
         });
       });
+
+      // Modify addCar function
+      async function addCar(e) {
+        e.preventDefault();
+        const formData = {
+          brand: document.getElementById('car_brand').value,
+          model: document.getElementById('car_model').value,
+          price_per_day: document.getElementById('car_price').value,
+          image_url: document.getElementById('car_image').value || '/static/images/default-car.jpg'
+        };
+
+        try {
+          const response = await fetch('/cars', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+          
+          if (response.ok) {
+            showToast('Car added successfully!', 'success');
+            setTimeout(() => {
+              window.location.href = '/$user_id$/cars';
+            }, 1500);
+          } else {
+            showToast(result.message || 'Failed to add car', 'error');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showToast('Failed to add car', 'error');
+        }
+      }
+
+      // Modify editCar function
+      async function editCar(e, carId) {
+        e.preventDefault();
+        const formData = {
+          brand: document.getElementById('car_brand').value,
+          model: document.getElementById('car_model').value,
+          price_per_day: document.getElementById('car_price').value,
+          image_url: document.getElementById('car_image').value || '/static/images/default-car.jpg'
+        };
+
+        try {
+          const response = await fetch(`/cars/${carId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const result = await response.json();
+          
+          if (response.ok) {
+            showToast('Car updated successfully!', 'success');
+            setTimeout(() => {
+              window.location.href = '/$user_id$/cars';
+            }, 1500);
+          } else {
+            showToast(result.message || 'Failed to update car', 'error');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showToast('Failed to update car', 'error');
+        }
+      }
     </script>
   </body>
 </html>

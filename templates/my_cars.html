@@ -78,7 +78,35 @@
       </footer>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <i class="fas"></i>
+      <span id="toastMessage"></span>
+    </div>
+
     <script>
+      // Toast notification function
+      function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const icon = toast.querySelector('i');
+        
+        // Set message and icon
+        toastMessage.textContent = message;
+        icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+        
+        // Set toast type
+        toast.className = `toast ${type}`;
+        
+        // Show toast
+        toast.classList.add('show');
+        
+        // Hide toast after 3 seconds
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      }
+
       function openDeleteModal(carId, carName) {
         const modal = document.getElementById('deleteModal');
         const carNameSpan = document.getElementById('carName');
@@ -93,13 +121,16 @@
             const result = await response.json();
             
             if (response.ok) {
-              window.location.reload();
+              showToast('Car deleted successfully!', 'success');
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
             } else {
-              alert(result.message || 'Failed to delete car');
+              showToast(result.message || 'Failed to delete car', 'error');
             }
           } catch (error) {
             console.error('Error:', error);
-            alert('Failed to delete car');
+            showToast('Failed to delete car', 'error');
           }
           closeDeleteModal();
         };
@@ -198,6 +229,29 @@
           }
         }
       });
+
+      // Add unrentCar function
+      async function unrentCar(event, carId) {
+        event.preventDefault();
+        try {
+          const response = await fetch(`/cars/${carId}/unrent`, {
+            method: 'POST'
+          });
+          const result = await response.json();
+          
+          if (response.ok) {
+            showToast('Car unrented successfully!', 'success');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            showToast(result.message || 'Failed to unrent car', 'error');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showToast('Failed to unrent car', 'error');
+        }
+      }
     </script>
   </body>
 </html>

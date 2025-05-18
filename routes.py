@@ -11,9 +11,9 @@ main = Blueprint('main','app')
 @main.route('/')
 def home():
     html_page = get_html('index')
-    cars = Car.load_all(rented_by_id=None)
+    cars = Car.load_all()
     user_id = session.get('user_id')
-    cars = [car for car in cars if car.get('user_id') != user_id]
+    cars = [car for car in cars if car.get('user_id') != user_id and car.get('rented_by_id') == None]
     # Get the heading from the text file and replace the placeholder
     heading = get_heading()
     html_page = html_page.replace("$heading$", heading)
@@ -238,7 +238,7 @@ def my_cars_page(user_id):
     user_id = session.get('user_id')
 
     cars = Car.load_all()
-    cars = [car for car in cars if car.get('user_id') == user_id]
+    cars = [car for car in cars if car.get('user_id') == user_id or car.get('rented_by_id') == user_id]
     
     if not cars:
         return html_page.replace("$car_cards$", '<p class="no-cars">You haven\'t added any cars yet. Add your first car!</p>')
@@ -250,10 +250,10 @@ def my_cars_page(user_id):
             <div class="car-card">
                 <img src="$image$" alt="$brand$ $model$">
                 <h2>$brand$ $model$</h2>
+                <span class="$status_class$">$status$</span>
                 <p class="car-price"><span>Price:</span> $$price$/Day</p>
                 <div class="card-actions">
-                    <a href="/cars?id=$id$" class="edit-btn">Edit</a>
-                    <button class="delete-btn" onclick="openDeleteModal($id$, '$brand$ $model$')">Delete</button>
+                    $action_buttons$
                 </div>
             </div>
         '''
@@ -264,6 +264,21 @@ def my_cars_page(user_id):
         car_card = car_card.replace("$model$", car.get('model', ''))
         car_card = car_card.replace("$price$", str(car.get('price_per_day', 0)))
         car_card = car_card.replace("$id$", str(car.get('id', 0)))
+        car_card = car_card.replace("$status$", "Rented" if car.get('rented_by_id') == user_id else "Owner")
+        car_card = car_card.replace("$status_class$", "rented" if car.get('rented_by_id') == user_id else "owner")
+        
+        # Add action buttons only if user is the owner
+        action_buttons = ""
+        if car.get('user_id') == user_id:
+            action_buttons = f'''
+                <a href="/cars?id={car.get('id', 0)}" class="edit-btn">Edit</a>
+                <button class="delete-btn" onclick="openDeleteModal({car.get('id', 0)}, '{car.get('brand', '')} {car.get('model', '')}')">Delete</button>
+            '''
+        elif car.get('rented_by_id') == user_id:
+            action_buttons = f'''
+                <button class="delete-btn" onclick="unrentCar(event, {car.get('id', 0)})">Unrent</button>
+            '''
+        car_card = car_card.replace("$action_buttons$", action_buttons)
         
         car_cards += car_card
     html_page = html_page.replace("$car_cards$", car_cards)
@@ -279,6 +294,22 @@ def rent_car(car_id):
         return jsonify({"message": "Car not found"}), 404
     car = Car(old_car['brand'], old_car['model'], old_car['price_per_day'], old_car['image_url'], old_car['user_id'], user_id, car_id)
     success, message = car.rent()
+    if success:
+        return jsonify({"message": message}), 200
+    return jsonify({"message": message}), 400
+
+# POST: Unrent car
+@main.route('/cars/<int:car_id>/unrent', methods=['POST'])
+def unrent_car(car_id):
+    old_car = Car.load_by_id(car_id)
+    user_id = session.get('user_id')
+    
+    if not old_car:
+        return jsonify({"message": "Car not found"}), 404
+    if old_car.get('rented_by_id') != user_id:
+        return jsonify({"message": "You can only unrent your own cars"}), 403
+    car = Car(old_car['brand'], old_car['model'], old_car['price_per_day'], old_car['image_url'], old_car['user_id'], None, car_id)
+    success, message = car.unrent()
     if success:
         return jsonify({"message": message}), 200
     return jsonify({"message": message}), 400

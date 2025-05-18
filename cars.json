@@ -31,7 +31,7 @@
         "price_per_day": "45",
         "image_url": "/static/images/1.jpg",
         "user_id": 2,
-        "rented_by_id": 1
+        "rented_by_id": null
     },
     {
         "id": 5,
@@ -39,10 +39,11 @@
         "model": "Altima",
         "price_per_day": "48",
         "image_url": "/static/images/1.jpg",
-        "user_id": 2
+        "user_id": 2,
+        "rented_by_id": null
     },
     {
-        "id": 6,    
+        "id": 6,
         "brand": "Hyundai",
         "model": "Elantra",
         "price_per_day": "43",
@@ -55,14 +56,16 @@
         "model": "Sportageee",
         "price_per_day": "52",
         "image_url": "/static/images/1.jpg",
-        "user_id": 2
+        "user_id": 2,
+        "rented_by_id": null
     },
     {
         "id": 8,
         "brand": "Nissannn",
-        "model": "C-Classsssssssss",
+        "model": "C-Classsssssssssss",
         "price_per_day": "5000",
         "image_url": "/static/images/1.jpg",
-        "user_id": 1
+        "user_id": 1,
+        "rented_by_id": null
     }
 ]

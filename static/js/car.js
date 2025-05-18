@@ -79,3 +79,26 @@ async function rentCar(e, carId) {
     alert("Failed to edit car");
   }
 }
+
+
+async function unrentCar(e, carId) {
+  e.preventDefault();
+  try {
+    const response = await fetch(`/cars/${carId}/unrent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    });
+    const result = await response.json();
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (response.ok) {
+      window.location.href = `/${user.id}/cars`;
+    } else {
+      alert(result.message || "Failed to unrent car");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Failed to unrent car");
+  }
+}

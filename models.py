@@ -19,11 +19,18 @@ class User:
         if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', self.email):
             return False, "Invalid email format."
         
-        if (len(self.password) < 8 or 
-            not re.search(r"[A-Za-z]", self.password) or 
-            not re.search(r"[0-9]", self.password) or 
-            not re.search(r"[!@#$%^&*(),.?\":{}|<>]", self.password)):
-            return False, "Weak password."
+        # Password validation matching client-side rules
+        if len(self.password) < 8:
+            return False, "Password must be at least 8 characters long."
+        
+        if not re.search(r"[A-Za-z]", self.password):
+            return False, "Password must contain at least one letter."
+            
+        if not re.search(r"[0-9]", self.password):
+            return False, "Password must contain at least one number."
+            
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", self.password):
+            return False, "Password must contain at least one special character."
         
         return True, "Valid user data"
 

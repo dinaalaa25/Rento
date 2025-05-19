@@ -6,6 +6,18 @@ import os
 # Path to the JSON file used for storing users
 users_db = os.path.join(os.path.dirname(__file__), 'users.json')
 
+def simple_hash(text):
+    result = []
+    # Loop through each character and its position
+    for i, char in enumerate(text, 1):
+        # Get ASCII code and multiply by position
+        ascii_code = ord(char)
+        hashed_value = ascii_code * i
+        result.append(str(hashed_value))
+    
+    # Join all numbers with dashes
+    return '-'.join(result)
+
 # Write user data to a JSON file (create or append)
 def write_to_json(**user_data):
     try:

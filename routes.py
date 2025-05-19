@@ -1,7 +1,7 @@
 # This file handles all route definitions for the application.
 
 from flask import Blueprint, request, jsonify, redirect, session
-from utils import get_html, get_heading
+from utils import get_html, get_heading, simple_hash
 from models import User, Car
 
 # Create a blueprint for grouping the routes
@@ -11,8 +11,14 @@ main = Blueprint('main','app')
 @main.route('/')
 def home():
     html_page = get_html('index')
-    cars = Car.load_all()
     user_id = session.get('user_id')
+    if not user_id:
+        return redirect('/signin')
+    
+    # Replace user_id first before any other replacements
+    html_page = html_page.replace("$user_id$", str(user_id))
+        
+    cars = Car.load_all()
     cars = [car for car in cars if car.get('user_id') != user_id and car.get('rented_by_id') == None]
     # Get the heading from the text file and replace the placeholder
     heading = get_heading()
@@ -45,7 +51,6 @@ def home():
         car_cards += car_card
     
     html_page = html_page.replace("$car_cards$", car_cards)
-    html_page = html_page.replace("$user_id$", str(user_id))
     return html_page
 
 # GET: Render the signin page
@@ -64,13 +69,19 @@ def signin():
     if not email or not password:
         return jsonify({"message": "Email and password are required."}), 400
 
-    # Create user object and authenticate
-    user = User(None, None, email, password)
+    # Hash the password before authentication
+    hashed_password = simple_hash(password)
+    
+    # Create user object and authenticate with hashed password
+    user = User(None, None, email, hashed_password)
     success, result = user.authenticate()
+    print('result', result)
     
     if success:
         # Store user ID in session
         session['user_id'] = result.get('id')
+        user_id = session.get('user_id')
+        print('user id', user_id)
         return jsonify(result), 200
     return jsonify({"message": result}), 401
 
@@ -83,19 +94,24 @@ def signup_page():
 @main.route('/signup', methods=['POST'])
 def signup():
     body = request.get_json()
+    original_password = body.get("password")
 
-    # Create user object
+    # Create user object with original password for validation
     user = User(
         first_name=body.get("first_name"),
         last_name=body.get("last_name"),
         email=body.get("email"),
-        password=body.get("password")
+        password=original_password  # Use original password for validation
     )
 
     # Validate user data
     is_valid, message = user.validate()
     if not is_valid:
         return jsonify({"message": message}), 400
+
+    # Hash the password after validation
+    hashed_password = simple_hash(original_password)
+    user.password = hashed_password  # Update password to hashed version
 
     # Save user
     success, message = user.save()
@@ -235,10 +251,16 @@ def logout():
 @main.route('/<int:user_id>/cars', methods=['GET'])
 def my_cars_page(user_id):
     html_page = get_html('my_cars')
-    user_id = session.get('user_id')
+    session_user_id = session.get('user_id')
+    if not session_user_id:
+        return redirect('/signin')
+    
+    # Verify that the requested user_id matches the session user_id
+    if user_id != session_user_id:
+        return redirect('/signin')
 
     cars = Car.load_all()
-    cars = [car for car in cars if car.get('user_id') == user_id or car.get('rented_by_id') == user_id]
+    cars = [car for car in cars if car.get('user_id') == session_user_id or car.get('rented_by_id') == session_user_id]
     
     if not cars:
         return html_page.replace("$car_cards$", '<p class="no-cars">You haven\'t added any cars yet. Add your first car!</p>')
@@ -264,17 +286,17 @@ def my_cars_page(user_id):
         car_card = car_card.replace("$model$", car.get('model', ''))
         car_card = car_card.replace("$price$", str(car.get('price_per_day', 0)))
         car_card = car_card.replace("$id$", str(car.get('id', 0)))
-        car_card = car_card.replace("$status$", "Rented" if car.get('rented_by_id') == user_id else "Owner")
-        car_card = car_card.replace("$status_class$", "rented" if car.get('rented_by_id') == user_id else "owner")
+        car_card = car_card.replace("$status$", "Rented" if car.get('rented_by_id') == session_user_id else "Owner")
+        car_card = car_card.replace("$status_class$", "rented" if car.get('rented_by_id') == session_user_id else "owner")
         
         # Add action buttons only if user is the owner
         action_buttons = ""
-        if car.get('user_id') == user_id:
+        if car.get('user_id') == session_user_id:
             action_buttons = f'''
                 <a href="/cars?id={car.get('id', 0)}" class="edit-btn">Edit</a>
                 <button class="delete-btn" onclick="openDeleteModal({car.get('id', 0)}, '{car.get('brand', '')} {car.get('model', '')}')">Delete</button>
             '''
-        elif car.get('rented_by_id') == user_id:
+        elif car.get('rented_by_id') == session_user_id:
             action_buttons = f'''
                 <button class="delete-btn" onclick="unrentCar(event, {car.get('id', 0)})">Unrent</button>
             '''
@@ -282,7 +304,7 @@ def my_cars_page(user_id):
         
         car_cards += car_card
     html_page = html_page.replace("$car_cards$", car_cards)
-    html_page = html_page.replace("$user_id$", str(user_id))
+    html_page = html_page.replace("$user_id$", str(session_user_id))
     return html_page
 
 @main.route('/cars/<int:car_id>/rent', methods=['POST'])
@@ -314,7 +336,7 @@ def unrent_car(car_id):
         return jsonify({"message": message}), 200
     return jsonify({"message": message}), 400
 
-# Catch-all route for undefined routes
-@main.route('/<path:path>')
-def catch_all(path):
-    return redirect('/signin')
+# # Catch-all route for undefined routes
+# @main.route('/<path:path>')
+# def catch_all(path):
+#     return redirect('/signin')

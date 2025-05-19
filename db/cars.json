@@ -4,7 +4,7 @@
         "brand": "Nissannn",
         "model": "C-Class",
         "price_per_day": "200",
-        "image_url": "/static/images/1.jpg",
+        "image_url": "https://www.kia.com/content/dam/kwcms/gt/en/images/discover-kia/voice-search/parts-80-2.jpg",
         "user_id": 1,
         "rented_by_id": null
     },
@@ -15,15 +15,6 @@
         "price_per_day": "300",
         "image_url": "/static/images/1.jpg",
         "user_id": 1,
-        "rented_by_id": null
-    },
-    {
-        "id": 3,
-        "brand": "Hyundaiii",
-        "model": "Camryyy",
-        "price_per_day": "50",
-        "image_url": "/static/images/1.jpg",
-        "user_id": 1,
-        "rented_by_id": 2
+        "rented_by_id": 3
     }
 ]

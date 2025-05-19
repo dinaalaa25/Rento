@@ -422,6 +422,8 @@ input.error {
   align-items: center;
   margin: 1rem 5% 0 5%;
   color: #e0d7ff;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .home-header h1 {
@@ -565,6 +567,13 @@ input.error {
     width: 95%;
     margin: 1rem auto;
   }
+  
+  @media screen and (max-width: 325px) {
+    .home-header {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 
   /* Adjust car cards for mobile */
   .car-card {
@@ -592,10 +601,61 @@ input.error {
   .navbar-menu {
     margin-top: 1rem;
   }
+
+  .home-header {
+    margin: 1rem 2% 0 2%;
+    justify-content: center;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .search-container {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  #searchInput {
+    width: 100%;
+  }
+
+  .add-car-btn {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    padding: 0.8rem;
+    font-size: 15px;
+  }
 }
 
-/* For very small screens */
 @media screen and (max-width: 480px) {
+  .home-header {
+    margin: 1rem 1% 0 1%;
+  }
+
+  .home-header h1 {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .header-actions {
+    gap: 0.5rem;
+  }
+
+  .search-container {
+    max-width: 100%;
+  }
+
+  .add-car-btn {
+    max-width: 100%;
+    padding: 0.7rem;
+    font-size: 14px;
+  }
+
   .car-card {
     padding: 0.8rem;
   }

@@ -58,7 +58,6 @@ async function editCar(e, carId) {
 }
 
 async function rentCar(e, carId) {
-  console.log("rentCar", e, carId);
   e.preventDefault();
   try {
     const response = await fetch(`/cars/${carId}/rent`, {

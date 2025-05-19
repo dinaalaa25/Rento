@@ -1,20 +1,74 @@
 [
     {
         "id": 1,
-        "brand": "Nissannn",
-        "model": "C-Class",
-        "price_per_day": "200",
-        "image_url": "https://www.kia.com/content/dam/kwcms/gt/en/images/discover-kia/voice-search/parts-80-2.jpg",
+        "brand": "Toyota ",
+        "model": "Corolla",
+        "price_per_day": "45",
+        "image_url": "/static/images/Toyota_Corolla.jpg",
         "user_id": 1,
         "rented_by_id": null
     },
     {
         "id": 2,
-        "brand": "Mercedes",
-        "model": "C-Class",
-        "price_per_day": "300",
-        "image_url": "/static/images/1.jpg",
+        "brand": "Honda",
+        "model": "Civic",
+        "price_per_day": "48",
+        "image_url": "/static/images/Honda_Civic.jpg",
         "user_id": 1,
-        "rented_by_id": 3
+        "rented_by_id": null
+    },
+    {
+        "id": 3,
+        "brand": "BMW M3",
+        "model": "Series",
+        "price_per_day": "95",
+        "image_url": "/static/images/BMW3_Series.jpg",
+        "user_id": 1,
+        "rented_by_id": null
+    },
+    {
+        "id": 4,
+        "brand": "Jeep",
+        "model": "Cherokee (SUV)",
+        "price_per_day": "68",
+        "image_url": "/static/images/Jeep_Cherokee_(SUV).jpg",
+        "user_id": 1,
+        "rented_by_id": null
+    },
+    {
+        "id": 5,
+        "brand": "Volkswagen",
+        "model": "Passat",
+        "price_per_day": "56",
+        "image_url": "/static/images/Volkswagen_Passat.jpeg",
+        "user_id": 2,
+        "rented_by_id": null
+    },
+    {
+        "id": 6,
+        "brand": "Mercedes-Benz",
+        "model": "C-Class",
+        "price_per_day": "105",
+        "image_url": "/static/images/Mercedes_Benz_C-Class.jpg",
+        "user_id": 2,
+        "rented_by_id": 1
+    },
+    {
+        "id": 7,
+        "brand": "Ford",
+        "model": "Escape (SUV)",
+        "price_per_day": "70",
+        "image_url": "/static/images/Ford_Escape_(SUV).jpg",
+        "user_id": 2,
+        "rented_by_id": null
+    },
+    {
+        "id": 8,
+        "brand": "Nissan",
+        "model": "Altima",
+        "price_per_day": "90",
+        "image_url": "/static/images/Nissan_Altima.jpg",
+        "user_id": 1,
+        "rented_by_id": null
     }
 ]

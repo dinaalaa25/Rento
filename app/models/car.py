@@ -37,7 +37,6 @@ class Car:
                 return cars
             return []
         except Exception as e:
-            print(f"Error loading cars: {str(e)}")
             return []
 
     @classmethod
